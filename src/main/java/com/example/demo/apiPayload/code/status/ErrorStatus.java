@@ -24,6 +24,11 @@ public enum ErrorStatus implements BaseErrorCode {
     LOGIN_ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4004", "이미 존재하는 로그인 ID입니다.");
 
 
+    //다이어리 관련 에러
+    DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST,"DIARY4001", "다이어리가 없습니다."),
+    MISSING_ESSENTIAL_ELEMENTS(HttpStatus.BAD_REQUEST,"DIARY4002", "다이어리 필수 항목이 누락되었습니다."),
+    INVALID_USER(HttpStatus.BAD_REQUEST,"DIARY4003", "사전 저장된 유저 아이디와 일치하지 않습니다.");
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

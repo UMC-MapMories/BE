@@ -54,6 +54,3 @@ public class Diary {
         this.modifiedAt = LocalDateTime.now();
     }
 }
-
-
-

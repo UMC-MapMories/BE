@@ -37,7 +37,3 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, code, message, data);
     }
 }
-
-// Error vs exception
-// 일요일 아침 10시
-// 1시간
