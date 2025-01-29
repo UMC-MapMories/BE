@@ -2,6 +2,52 @@ package com.example.demo.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name; // 프로필 이름
+
+    private String profileImg; // 프로필 이미지 경로
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    private int point;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now(); // 생성일
+
+    @Column(nullable = false)
+    private LocalDateTime modifiedAt = LocalDateTime.now(); // 수정일
+
+    private String socialId;
+    private String loginType;
+
+    // private String role; // 유저 권한
+
+    // private String username;
+
+}
+
+/*
+package com.example.demo.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -15,14 +61,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @DynamicUpdate
-@DynamicInsert // insert, update 시 null 인 경우는 그냥 쿼리를 보내지 않도록 하기
+@DynamicInsert
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId; // 자동변환 user_id
-
-    // socialId -> 칼럼도 따로 필요...?
 
     @Column(nullable = false, length = 255)
     private String loginMethod; // 로그인 방법 = Kakao, Google, Normal
@@ -48,3 +92,6 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime modifiedAt = LocalDateTime.now(); // 수정일
 }
+
+*/
+

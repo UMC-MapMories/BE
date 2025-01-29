@@ -1,74 +1,112 @@
 package com.example.demo.config.security;
 
+import com.example.demo.jwt.JWTFilter;
+import com.example.demo.jwt.JWTUtil;
+import com.example.demo.jwt.LoginFilter;
+// import com.example.demo.oauth2.CustomSuccessHandler;
+// import com.example.demo.service.CustomOAuth2UserService;
+import com.example.demo.service.TokenBlacklistService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.example.demo.security.JwtTokenFilter;
-import com.example.demo.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
-public class SecurityConfig {
-
-    private final JwtTokenProvider jwtTokenProvider;
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/auth/login", "/auth/register").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
-}
-
-
-/*
 @EnableWebSecurity
-@Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // HTTP 요청에 대한 접근 제어
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home", "/signup", "/css/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                // 폼 기반 로그인에 대한 설정
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
-                        .permitAll()
-                )
-                // 로그아웃 처리에 대한 설정
-                .logout((logout) -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                );
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
+    private final TokenBlacklistService tokenBlacklistService;
 
-        return http.build();
+    // private final CustomOAuth2UserService customOAuth2UserService;
+    // private final CustomSuccessHandler customSuccessHandler;
+
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, TokenBlacklistService tokenBlacklistService) {
+        this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil = jwtUtil;
+        this.tokenBlacklistService = tokenBlacklistService;
+
+        // this.customOAuth2UserService = customOAuth2UserService;
+        // this.customSuccessHandler = customSuccessHandler;
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        //csrf disable
+        http
+                .csrf((auth) -> auth.disable());
+
+        //From 로그인 방식 disable
+        http
+                .formLogin((auth) -> auth.disable());
+
+        //http basic 인증 방식 disable
+        http
+                .httpBasic((auth) -> auth.disable());
+
+
+        /*
+        //oauth2
+        http
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService))
+                        .successHandler(customSuccessHandler) // handler 등록
+                );
+        */
+
+        // 경로별 인가
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/login", "/", "/join").permitAll() // 이 경로에서는 권한 다 허용
+                        // .requestMatchers("/admin").hasRole("ADMIN")  // ADMIN 권한만 접근
+                        .anyRequest().authenticated()); // 그 외 다른 요청은 로그인 사용자만 접근 = authenticated() 메서드
+
+        http.addFilterBefore(new JWTFilter(jwtUtil, tokenBlacklistService), LoginFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        // http
+        //        .addFilterBefore(new JWTFilter(jwtUtil, tokenBlacklistService), LoginFilter.class);
+        // http
+        //        .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        //세션 설정
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        /*
+        // 로그아웃 설정
+        http.logout(logout -> logout
+                .logoutUrl("/logout")  // 로그아웃 URL 설정
+                .logoutSuccessUrl("/")  // 로그아웃 후 리디렉션 URL 설정
+                .invalidateHttpSession(true)  // 세션 무효화
+                .deleteCookies("JSESSIONID")  // 세션 쿠키 삭제
+        );
+        */
+
+        return http.build();
+    }
 }
-*/
