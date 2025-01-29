@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Table(name = "token_blacklist")
 @Getter
 @Setter
+
+// logout 했을 때 토큰을 넣어서 logout 처리를 하기 위한 Entity
 public class TokenBlacklist {
 
     @Id

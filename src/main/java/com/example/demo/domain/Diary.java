@@ -3,7 +3,6 @@ package com.example.demo.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,9 +14,9 @@ public class Diary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long diaryId; // 다이어리 고유 ID
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "user_id", nullable = false)
-    // private User user; // 작성자 (User 테이블 참조)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // 작성자 (User 테이블 참조)
 
     @Column(nullable = false)
     private LocalDateTime date; // 작성 날짜
@@ -55,3 +54,6 @@ public class Diary {
         this.modifiedAt = LocalDateTime.now();
     }
 }
+
+
+

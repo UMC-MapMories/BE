@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-// JWT를 검증 / SecurityContextHolder에 세션 생성
+// JWT 검증, SecurityContextHolder 세션 생성
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -30,22 +30,20 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        //request에서 Authorization 헤더를 찾음
+        // request -> Authorization 헤더를 찾기
         String authorization= request.getHeader("Authorization");
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
             System.out.println("token null");
-            filterChain.doFilter(request, response); //filter 종료, 다음 filter에 req,resp 넘겨주기
+            filterChain.doFilter(request, response); //filter 종료, req,resp 넘겨주기 -> 다음 filter
 
-            //조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
         System.out.println("authorization now");
 
-        //Bearer 부분 제거 후 순수 토큰만 획득
         String token = authorization.split(" ")[1];
 
         System.out.println("4" + tokenBlacklistService.isTokenBlacklisted(token));
@@ -63,21 +61,18 @@ public class JWTFilter extends OncePerRequestFilter {
             System.out.println("token expired");
             filterChain.doFilter(request, response);
 
-            //조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
-        //토큰에서 username과 role 획득
+        //토큰에서 email 휙득
         String email = jwtUtil.getEmail(token);
-        // String role = jwtUtil.getRole(token);
 
-        //userEntity를 생성하여 값 set
+        //userEntity 생성 -> 값 set
         User userEntity = new User();
         userEntity.setEmail(email);
         userEntity.setPassword("temppassword");
-        // userEntity.setRole(role);
 
-        //UserDetails에 회원 정보 객체 담기
+        //UserDetails 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
 
         //스프링 시큐리티 인증 토큰 생성
@@ -88,6 +83,6 @@ public class JWTFilter extends OncePerRequestFilter {
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        filterChain.doFilter(request, response); // 다음 filter에 req, res 전달
+        filterChain.doFilter(request, response); // 다음 filter req, res 전달
     }
 }

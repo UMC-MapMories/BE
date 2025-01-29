@@ -18,9 +18,10 @@ public class JWTUtil {
 
     private SecretKey secretKey;
 
+    // String secret key 기반 객체 키를 생성
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-    } // String secret key 기반 객체 키를 생성
+    }
 
     public Long getId(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", Long.class);
@@ -49,25 +50,20 @@ public class JWTUtil {
     }
 
     public LocalDateTime getExpiration(String token) {
-        // JWT 토큰을 파싱하여 클레임을 가져옴
+
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
-                .build() // 파서를 빌드하여 사용
-                .parseSignedClaims(token) // 서명된 클레임을 파싱
-                .getPayload(); // 클레임에서 Payload 가져옴
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
-        // 만료 시간을 가져와 LocalDateTime으로 변환
         Date expirationDate = claims.getExpiration();
         return LocalDateTime.ofInstant(expirationDate.toInstant(), ZoneId.systemDefault());
     }
 
-
-
-    // 토큰 생성 메서드
-    // 인자를 받아서 토큰을 응답
+    // 토큰 생성 메서드, 인자를 받아서 토큰을 응답
     public String createJwt(Long id, String email, Long expiredMs) {
 
-        // name + 프로필 +
         return Jwts.builder()
                 .claim("id", id)
                 .claim("email", email)

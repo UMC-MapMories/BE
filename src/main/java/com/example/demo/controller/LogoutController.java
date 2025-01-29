@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 
 @RestController
+// 로그아웃
 public class LogoutController {
 
     private final JWTUtil jwtUtil;
@@ -24,18 +25,13 @@ public class LogoutController {
 
     @PostMapping("/customLogout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorization ) {
-        // System.out.println(LocalDateTime.now());
-        // return ResponseEntity.ok("123");
-
-        // db 관련 <-> try catch // try안에서 throw -> catch // 받는다,,
-        // catch가 안되면 500 응답 -> 종료된다.
 
         try {
             System.out.println("1");
             if (authorization != null && authorization.startsWith("Bearer ")) {
                 System.out.println("2");
 
-                String token = authorization.split(" ")[1];  // "Bearer " 이후의 토큰 부분 추출
+                String token = authorization.split(" ")[1];
 
                 System.out.println("logout" + token);
 
@@ -60,4 +56,3 @@ public class LogoutController {
     }
 }
 
-// 500 -> 응답이 정상적이지 못하게 종료,, 자동으로

@@ -12,6 +12,7 @@ import java.util.Map;
 
 @Controller
 @ResponseBody
+// 회원가입
 public class JoinController {
 
     private final JoinService joinService;

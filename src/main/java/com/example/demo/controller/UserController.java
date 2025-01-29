@@ -39,24 +39,23 @@ public class UserController {
         }
 
         String jwtToken = token.split(" ")[1];
-        Long userId = jwtUtil.getId(jwtToken);  // JWT에서 ID 추출
+        Long userId = jwtUtil.getId(jwtToken);
 
         // ID 기반 사용자 프로필 수정
-        Optional<User> userOptional = userRepository.findById(userId); // UserRepository에서 ID로 사용자 찾기
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if (!userOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
         // userOptional -> 찾아온 사용자
-
         User user = userOptional.get();
         user.setName(updateUserDTO.getName());  // 이름 수정
         user.setProfileImg(updateUserDTO.getProfileImg());  // 이미지 URL 수정
 
         userRepository.save(user);  // 수정된 사용자 정보 저장
 
-        // 3. 성공적인 응답 반환
+        // 성공적 응답 반환
         return ResponseEntity.ok("Profile updated successfully.");
     }
 
@@ -73,9 +72,9 @@ public class UserController {
             }
 
             String jwtToken = token.split(" ")[1];
-            Long userId = jwtUtil.getId(jwtToken);  // JWT에서 ID 추출 (jwtUtil은 JWTUtil 클래스)
+            Long userId = jwtUtil.getId(jwtToken);  // JWT에서 ID 추출
 
-            // 2. ID 기반으로 사용자 정보 조회
+            // ID 기반으로 사용자 정보 조회
             Optional<User> userOptional = userRepository.findById(userId);
 
             // 사용자가 DB에 존재하지 않을 때
@@ -92,10 +91,6 @@ public class UserController {
             throw new CustomException("test",400);
         }
     }
-
-
-
-
 }
 
 
