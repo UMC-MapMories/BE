@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.domain.User;
 import com.example.demo.dto.ProfileResponseDTO;
 import com.example.demo.dto.UpdateUserDTO;
+import com.example.demo.exception.CustomException;
 import com.example.demo.jwt.JWTUtil;
 import com.example.demo.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,29 +64,33 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<ProfileResponseDTO> getProfile(HttpServletRequest request) {
 
-        // 1. JWT 토큰에서 사용자 ID 추출
-        String token = request.getHeader("Authorization");
+        try {
+            // 1. JWT 토큰에서 사용자 ID 추출
+            String token = request.getHeader("Authorization");
 
-        if (token == null || !token.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            if (token == null || !token.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+
+            String jwtToken = token.split(" ")[1];
+            Long userId = jwtUtil.getId(jwtToken);  // JWT에서 ID 추출 (jwtUtil은 JWTUtil 클래스)
+
+            // 2. ID 기반으로 사용자 정보 조회
+            Optional<User> userOptional = userRepository.findById(userId);
+
+            // 사용자가 DB에 존재하지 않을 때
+            if (!userOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            User user = userOptional.get();
+
+            // 3. 프로필 정보 반환
+            ProfileResponseDTO responseDTO = new ProfileResponseDTO(user.getName(), user.getProfileImg());
+            return ResponseEntity.ok(responseDTO);
+        }catch (Exception e) {
+            throw new CustomException("test",400);
         }
-
-        String jwtToken = token.split(" ")[1];
-        Long userId = jwtUtil.getId(jwtToken);  // JWT에서 ID 추출 (jwtUtil은 JWTUtil 클래스)
-
-        // 2. ID 기반으로 사용자 정보 조회
-        Optional<User> userOptional = userRepository.findById(userId);
-
-        // 사용자가 DB에 존재하지 않을 때
-        if (!userOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        User user = userOptional.get();
-
-        // 3. 프로필 정보 반환
-        ProfileResponseDTO responseDTO = new ProfileResponseDTO(user.getName(), user.getProfileImg());
-        return ResponseEntity.ok(responseDTO);
     }
 
 

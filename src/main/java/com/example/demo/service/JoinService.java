@@ -26,6 +26,9 @@ public class JoinService {
         String email = joinDTO.getEmail(); // getter,, 명명 규칙이 있는 듯
         String password = joinDTO.getPassword();
 
+        // 회원가입 할 때 제약 추가
+        // 예외 발생
+
         Boolean isExist = userRepository. existsByEmail(email);
         // isExist 생성 + email 전달
         // true ->  return 종료

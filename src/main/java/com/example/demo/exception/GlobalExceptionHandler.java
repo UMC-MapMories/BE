@@ -14,7 +14,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getStatus());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getStatus()));
-    }
+    } // errorResponse -> body / httpStatus = header
 
     // NullPointerException 처리
     @ExceptionHandler(NullPointerException.class)

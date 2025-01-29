@@ -42,6 +42,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             String email = loginRequest.getEmail();
             String password = loginRequest.getPassword();
 
+            // 검증 로직 여기에 추가
+            // 실패되면 에러 발생 -> 400 error
+
+
             // email, password 확인
             System.out.println("Attempting authentication with email: " + email);
             System.out.println("Attempting authentication with password: " + password);
