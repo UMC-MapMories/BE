@@ -35,10 +35,12 @@ public class Diary {
     @Column(nullable = false)
     private boolean isCollaborative; // 협업 여부 (true: 교환일기, false: 개인 일기)
 
-    @Column(nullable = false, precision = 10, scale = 6)
+    // @Column(nullable = false, precision = 10, scale = 6)
+    @Column(nullable = false)
     private double latitude; // 위도
 
-    @Column(nullable = false, precision = 10, scale = 6)
+    // @Column(nullable = false, precision = 10, scale = 6)
+    @Column(nullable = false)
     private double longitude; // 경도
 
     @Column(nullable = false, updatable = false)
