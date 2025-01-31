@@ -30,10 +30,10 @@ public class Diary {
     private String imgUrl; // 이미지 URL
 
     @Column(nullable = false)
-    private boolean isOpen; // 공개 여부 (true: 공개, false: 비공개)
+    private Boolean isOpen; // 공개 여부 (true: 공개, false: 비공개)
 
     @Column(nullable = false)
-    private boolean isCollaborative; // 협업 여부 (true: 교환일기, false: 개인 일기)
+    private Boolean isCollaborative; // 협업 여부 (true: 교환일기, false: 개인 일기)ç
 
     // @Column(nullable = false, precision = 10, scale = 6)
     @Column(nullable = false)
