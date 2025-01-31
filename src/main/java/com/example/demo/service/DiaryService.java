@@ -28,7 +28,7 @@ public class DiaryService {
         Diary existingDiary = existingDiaryOpt.get();
 
         // 다이어리 상 저장된 유저와 요청 유저의 id가 다를 경우 예외 발생
-        if (!existingDiary.getUser().getUserId().equals(userId)) {
+        if (!existingDiary.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorStatus.INVALID_USER.getMessage(), ErrorStatus.INVALID_USER.getHttpStatus().value());
         }
 

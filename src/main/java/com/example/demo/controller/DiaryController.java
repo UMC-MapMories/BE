@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.apiPayload.ApiResponse;
 import com.example.demo.apiPayload.code.status.ErrorStatus;
 import com.example.demo.domain.Diary;
+import com.example.demo.jwt.JWTUtil;
 import com.example.demo.service.DiaryService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class DiaryController {
 
     @Autowired
     private DiaryService diaryService;
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     // 다이어리 작성
     @PostMapping
