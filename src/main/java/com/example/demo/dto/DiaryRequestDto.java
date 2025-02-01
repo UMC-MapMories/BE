@@ -3,7 +3,7 @@ package com.example.demo.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -14,5 +14,5 @@ public class DiaryRequestDto {
     private String imgUrl;
     private Boolean isOpen;
     private Boolean isCollaborative;
-    private LocalDateTime date;
+    private LocalDate date;
 }

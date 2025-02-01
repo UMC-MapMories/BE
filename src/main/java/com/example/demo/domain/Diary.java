@@ -3,6 +3,8 @@ package com.example.demo.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,7 +21,7 @@ public class Diary {
     private User user; // 작성자 (User 테이블 참조)
 
    // @Column(nullable = false)
-    private LocalDateTime date; // 작성 날짜
+    private LocalDate date; // 작성 날짜
 
     //@Column(nullable = false)
     private String title; // 제목

@@ -8,6 +8,7 @@ import com.example.demo.repository.DiaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,7 @@ public class DiaryService {
         existingDiary.setImgUrl(diaryRequestDto.getImgUrl());
         existingDiary.setIsOpen(diaryRequestDto.getIsOpen());
         existingDiary.setIsCollaborative(diaryRequestDto.getIsCollaborative());
+        existingDiary.setModifiedAt(LocalDateTime.now());
 
         // 5. 다이어리 저장 (업데이트)
         return diaryRepository.save(existingDiary);
