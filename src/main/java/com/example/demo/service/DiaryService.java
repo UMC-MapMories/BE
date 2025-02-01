@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.apiPayload.code.status.ErrorStatus;
 import com.example.demo.domain.Diary;
+import com.example.demo.dto.DiaryRequestDto;
 import com.example.demo.exception.CustomException;
 import com.example.demo.repository.DiaryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,37 +18,37 @@ public class DiaryService {
     private DiaryRepository diaryRepository;
 
     // 다이어리 작성
-    public Diary createDiary(Diary diary, Long userId) {
-        // 다이어리 ID로 기존 다이어리 조회
-        Optional<Diary> existingDiaryOpt = diaryRepository.findById(diary.getDiaryId());
+    public Diary createDiary(DiaryRequestDto diaryRequestDto, Long userId) {
+        // 1. 다이어리 ID로 기존 다이어리 조회
+        Optional<Diary> existingDiaryOpt = diaryRepository.findById(diaryRequestDto.getDiaryId());
 
         if (existingDiaryOpt.isEmpty()) {
-            throw new CustomException(ErrorStatus.USER_NOT_FOUND.getMessage(), ErrorStatus.USER_NOT_FOUND.getHttpStatus().value());
+            throw new CustomException(ErrorStatus.DIARY_NOT_FOUND.getMessage(), ErrorStatus.DIARY_NOT_FOUND.getHttpStatus().value());
         }
 
         Diary existingDiary = existingDiaryOpt.get();
 
-        // 다이어리 상 저장된 유저와 요청 유저의 id가 다를 경우 예외 발생
+        // 2. 다이어리 상 저장된 유저와 요청 유저의 id가 다를 경우 예외 발생
         if (!existingDiary.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorStatus.INVALID_USER.getMessage(), ErrorStatus.INVALID_USER.getHttpStatus().value());
         }
 
-        // 필수 항목 누락시 예외 발생
-        if (diary.getDate() == null || diary.getTitle() == null || diary.getContent() == null
-                || diary.getIsOpen() == null || diary.getIsCollaborative() == null) {
+        // 3. 필수 항목 누락시 예외 발생
+        if (diaryRequestDto.getDate() == null || diaryRequestDto.getTitle() == null || diaryRequestDto.getContent() == null
+                || diaryRequestDto.getIsOpen() == null || diaryRequestDto.getIsCollaborative() == null) {
             throw new CustomException(ErrorStatus.MISSING_ESSENTIAL_ELEMENTS.getMessage(),
                     ErrorStatus.MISSING_ESSENTIAL_ELEMENTS.getHttpStatus().value());
         }
 
-        // 다이어리 정보 저장
-        existingDiary.setDate(diary.getDate());
-        existingDiary.setTitle(diary.getTitle());
-        existingDiary.setContent(diary.getContent());
-        existingDiary.setImgUrl(diary.getImgUrl());
-        existingDiary.setIsOpen(diary.getIsOpen());
-        existingDiary.setIsCollaborative(diary.getIsCollaborative());
+        // 4. 다이어리 정보 업데이트
+        existingDiary.setDate(diaryRequestDto.getDate());
+        existingDiary.setTitle(diaryRequestDto.getTitle());
+        existingDiary.setContent(diaryRequestDto.getContent());
+        existingDiary.setImgUrl(diaryRequestDto.getImgUrl());
+        existingDiary.setIsOpen(diaryRequestDto.getIsOpen());
+        existingDiary.setIsCollaborative(diaryRequestDto.getIsCollaborative());
 
-        // 다이어리 저장 (업데이트)
+        // 5. 다이어리 저장 (업데이트)
         return diaryRepository.save(existingDiary);
     }
 

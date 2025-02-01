@@ -80,7 +80,7 @@ public class SecurityConfig {
         // 경로별 인가
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/join").permitAll() // 경로 권한 다 허용
+                        .requestMatchers("/login", "/", "/join","location","/diary", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 경로 권한 다 허용
                         // .requestMatchers("/admin").hasRole("ADMIN")  // ADMIN 권한만 접근
                         .anyRequest().authenticated()); // 그 외 다른 요청은 authenticated() 메서드로 로그인 사용자만 접근
 
