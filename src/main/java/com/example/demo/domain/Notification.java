@@ -19,6 +19,6 @@ public class Notification {
 
     private String type; // 알림 유형 (사진, 업데이트 등)
     private String message; // 알림 메시지
-    private boolean read; // 읽음 여부
+    private boolean isRead; // 읽음 여부
     private LocalDateTime createdAt; // 생성 시간
 }
