@@ -53,23 +53,43 @@ public class FriendshipService {
                 .orElseThrow(() -> new CustomException(ErrorStatus.TO_USER_NOT_FOUND.getMessage(),
                         ErrorStatus.TO_USER_NOT_FOUND.getHttpStatus().value()));
 
-        if (friendshipRepository.findByFromUserAndToUser(fromUser, toUser).isPresent()) {
-            throw new CustomException(ErrorStatus.REQUEST_ALREADY_EXIST.getMessage(),
-                    ErrorStatus.REQUEST_ALREADY_EXIST.getHttpStatus().value());
+        Optional<Friendship> friend = friendshipRepository.findByUsers(fromUser, toUser);
 
+        if (friend.isPresent()) {
+            Friendship friendship = friend.get();
+
+            if (friendship.getStatus() == FriendshipStatus.REJECTED || friendship.getStatus() == FriendshipStatus.DELETED) {
+                // 기존 요청을 재활용하되, 신청 방향이 바뀌었는지 확인
+                if (!friendship.getFromUser().equals(fromUser)) {
+                    // 기존 요청의 fromUser와 toUser가 반대로 되어 있으면 swap
+                    friendship.setFromUser(fromUser);
+                    friendship.setToUser(toUser);
+                }
+                friendship.setStatus(FriendshipStatus.PENDING);
+                friendship.setCreatedAt(java.time.LocalDateTime.now());
+            } else {
+                throw new CustomException(ErrorStatus.REQUEST_ALREADY_EXIST.getMessage(),
+                        ErrorStatus.REQUEST_ALREADY_EXIST.getHttpStatus().value());
+            }
+
+            friendshipRepository.save(friendship);
+            return FriendshipConverter.toDTO(friendship);
         }
 
-        Friendship friendship = new Friendship(null, fromUser, toUser, FriendshipStatus.PENDING,
+        // 기존 요청이 없을 경우 새 요청 생성
+        Friendship newFriendship = new Friendship(null, fromUser, toUser, FriendshipStatus.PENDING,
                 java.time.LocalDateTime.now(), null);
-        friendshipRepository.save(friendship);
-        return FriendshipConverter.toDTO(friendship);
+
+        friendshipRepository.save(newFriendship);
+        return FriendshipConverter.toDTO(newFriendship);
     }
 
     // 친구 삭제하기
     public void deleteFriend(Long fromUserId, Long toUserId) {
-        if(fromUserId.equals(toUserId)){
+        if (fromUserId.equals(toUserId)) {
             throw new CustomException(ErrorStatus._BAD_REQUEST.getMessage(), ErrorStatus._BAD_REQUEST.getHttpStatus().value());
         }
+
         User fromUser = userRepository.findById(fromUserId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.FROM_USER_NOT_FOUND.getMessage(),
                         ErrorStatus.FROM_USER_NOT_FOUND.getHttpStatus().value()));
@@ -78,10 +98,17 @@ public class FriendshipService {
                         ErrorStatus.TO_USER_NOT_FOUND.getHttpStatus().value()));
 
         Optional<Friendship> friendship = friendshipRepository.findByFromUserAndToUser(fromUser, toUser);
+
+        if (friendship.isEmpty()) {
+            friendship = friendshipRepository.findByFromUserAndToUser(toUser, fromUser);
+        }
+
         friendship.ifPresent(f -> {
-            f.setStatus(FriendshipStatus.DELETED);  // 상태를 DELETED로 설정
-            f.setRespondedAt(LocalDateTime.now());  // respondedAt에 현재 시간 저장
-            friendshipRepository.save(f);  // 변경된 friendship 저장
+            if (f.getStatus() == FriendshipStatus.ACCEPTED) { // 상태가 ACCEPTED인 경우만 변경
+                f.setStatus(FriendshipStatus.DELETED);
+                f.setRespondedAt(LocalDateTime.now());
+                friendshipRepository.save(f);
+            }
         });
     }
 
