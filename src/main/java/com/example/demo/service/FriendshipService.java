@@ -165,4 +165,21 @@ public class FriendshipService {
 
         friendshipRepository.save(friendship);
     }
+
+    @Transactional
+    public void rejectFriendRequest(Long fromUserId, Long toUserId) {
+        Friendship friendship = friendshipRepository.findByFromUserIdAndToUserId(fromUserId, toUserId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.REQUEST_NOT_FOUND.getMessage(),
+                        ErrorStatus.REQUEST_NOT_FOUND.getHttpStatus().value()));
+
+        if (friendship.getStatus() != FriendshipStatus.PENDING) {
+            throw new CustomException(ErrorStatus.REQUEST_NOT_PENDING.getMessage(),
+                    ErrorStatus.REQUEST_NOT_PENDING.getHttpStatus().value());
+        }
+
+        friendship.setStatus(FriendshipStatus.REJECTED);
+        friendship.setRespondedAt(LocalDateTime.now());
+
+        friendshipRepository.save(friendship);
+    }
 }

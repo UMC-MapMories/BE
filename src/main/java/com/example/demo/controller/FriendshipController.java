@@ -91,6 +91,22 @@ public class FriendshipController {
         return ApiResponse.onSuccess(null);
     }
 
+    @PostMapping("/rejectRequest/{fromUserId}")
+    public ApiResponse<FriendshipDto> rejectFriendRequest(@PathVariable Long fromUserId,HttpServletRequest request) {
+        // 1. JWT 토큰에서 사용자 ID 추출
+        String token = request.getHeader("Authorization");
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ApiResponse.onFailure(ErrorStatus.INVALID_TOKEN.getCode(), ErrorStatus.INVALID_TOKEN.getMessage(), null);
+        }
+
+        String jwtToken = token.split(" ")[1];
+        Long userId = jwtUtil.getId(jwtToken);
+
+        friendshipService.rejectFriendRequest(fromUserId, userId);
+        return ApiResponse.onSuccess(null);
+    }
+
     // 친구 삭제
     @DeleteMapping("/delete")
     public ApiResponse<Void> deleteFriend(@RequestParam Long toUserId, HttpServletRequest request) {
