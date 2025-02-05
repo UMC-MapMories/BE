@@ -55,6 +55,7 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+        /*
         //토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
 
@@ -63,6 +64,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             return;
         }
+        */
 
         //토큰에서 email 휙득
         String email = jwtUtil.getEmail(token);
