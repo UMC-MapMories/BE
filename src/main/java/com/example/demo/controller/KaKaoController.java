@@ -27,26 +27,14 @@ public class KaKaoController {
     @PostMapping("/Kakao")
     public ResponseEntity<String> updateProfile(HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader("X-Kakao-Authorization");
-        System.out.println("KaKaoController " + token);
 
         if (token == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Token is missing or invalid.");
         }
 
         try {
-            // 카카오 공개 키 가져오기
-            RSAPublicKey kakaoPublicKey = KakaoIdTokenValidator.getKakaoPublicKey(token);
-
-            System.out.println("1" + kakaoPublicKey );
-
-            // ID 토큰 검증
-            Claims claims = KakaoIdTokenValidator.verifyIdToken(token, kakaoPublicKey);
-
-            System.out.println("KakaoController claims: " + claims);
-
             // 클레임에서 이메일 추출
-            String email = KakaoIdTokenValidator.getEmailFromClaims(claims);
-            System.out.println("Extracted Email: " + email);
+            String email = KakaoIdTokenValidator.getEmailFromTokens(token);
 
             // DB에서 이메일로 사용자 조회
             User existingUser = userRepository.findByEmail(email);
@@ -55,6 +43,7 @@ public class KaKaoController {
                 // 사용자 정보가 없다면 회원가입 후 저장
                 User newUser = new User();
                 newUser.setEmail(email);
+                newUser.setPassword("default");
                 userRepository.save(newUser);
 
                 existingUser = newUser;  // 새로 저장된 사용자로 갱신

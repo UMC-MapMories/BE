@@ -36,24 +36,20 @@ public class GoogleController {
 
 
         try {
-            RSAPublicKey googlePublicKey = GoogleIdTokenValidator.getGooglePublicKey(token);
+            // 1. 토큰에서 이메일 추출
+            String email = GoogleIdTokenValidator.getEmailFromTokens(token);
 
-            System.out.println("GoogleController 11111111 " + googlePublicKey);
-            Claims claims = GoogleIdTokenValidator.verifyIdToken(token, googlePublicKey);
-
-            System.out.println("GoogleController" + claims);
-
-            // 3. 클레임에서 이메일 추출
-            String email = GoogleIdTokenValidator.getEmailFromClaims(claims);
             System.out.println("Extracted Email: " + email);
 
-            // 로그인 = DB에서 이메일로 사용자 조회
+            // 2. 로그인 = DB에서 이메일로 사용자 조회
             User existingUser = userRepository.findByEmail(email);
 
             if (existingUser == null) {
                 // 사용자 정보가 없다면 회원가입 후 저장
                 User newUser = new User();
                 newUser.setEmail(email);
+                newUser.setPassword("temppassword");
+
                 userRepository.save(newUser);
 
                 existingUser = newUser;  // 새로 저장된 사용자로 갱신
