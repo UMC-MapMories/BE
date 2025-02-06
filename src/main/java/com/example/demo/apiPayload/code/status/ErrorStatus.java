@@ -28,7 +28,15 @@ public enum ErrorStatus implements BaseErrorCode {
     //다이어리 관련 에러
     DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST,"DIARY4001", "다이어리가 없습니다."),
     MISSING_ESSENTIAL_ELEMENTS(HttpStatus.BAD_REQUEST,"DIARY4002", "다이어리 필수 항목이 누락되었습니다."),
-    INVALID_USER(HttpStatus.BAD_REQUEST,"DIARY4003", "사전 저장된 유저 아이디와 일치하지 않습니다.");
+    INVALID_USER(HttpStatus.BAD_REQUEST,"DIARY4003", "사전 저장된 유저 아이디와 일치하지 않습니다."),
+
+    //친구 요청 관련 에러
+    TO_USER_NOT_FOUND(HttpStatus.BAD_REQUEST,"FRIEND4001", "신청자 사용자가 없습니다."),
+    FROM_USER_NOT_FOUND(HttpStatus.BAD_REQUEST,"FRIEND4002", "수신자 사용자가 없습니다."),
+    REQUEST_NOT_FOUND(HttpStatus.BAD_REQUEST,"FRIEND4003", "친구 신청이 존재하지 않습니다."),
+    REQUEST_ALREADY_EXIST(HttpStatus.CONFLICT, "FRIEND4004", "이미 친구 신청을 했습니다."),
+    REQUEST_NOT_PENDING(HttpStatus.CONFLICT, "FRIEND4005", "친구 수락 대기 상태가 아닙니다."),
+    CANNOT_SEND_REQUEST_TO_SELF(HttpStatus.BAD_REQUEST,"FRIEND4006", "자신에게 친구 신청 할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
