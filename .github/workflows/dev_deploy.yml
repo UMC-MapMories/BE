@@ -20,7 +20,7 @@ jobs:
       - name: Make application.yml  # application.yml 파일 생성
         run: |
           cd ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.properties
+          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
         shell: bash
 
       - name: Cache Gradle packages  # Gradle 캐시 설정
