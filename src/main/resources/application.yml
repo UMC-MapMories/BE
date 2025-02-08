@@ -21,7 +21,3 @@ spring:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
   application:
     name: mapmories
-  security:
-    user:
-      name: user
-      password: "{noop}password"
