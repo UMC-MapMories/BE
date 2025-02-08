@@ -34,7 +34,7 @@ jobs:
       - name: Upload build artifact  # 빌드된 아티팩트 업로드
         uses: actions/upload-artifact@v4
         with:
-          name: umc7thServer
+          name: mapmoriesServer
           path: build/libs/*.jar
 
   deploy:
@@ -43,9 +43,9 @@ jobs:
 
     steps:
       - name: Download build artifact  # 이전 단계에서 업로드한 아티팩트 다운로드
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1
         with:
-          name: umc7thServer
+          name: mapmoriesServer
           path: build/libs/
 
       - name: Deploy to EC2  # EC2에 배포
