@@ -23,25 +23,6 @@ public class CustomUserDetails implements UserDetails {
         return Collections.emptyList();
     }
 
-    /*
-    // Role 값을 반환
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Collection<GrantedAuthority> collection = new ArrayList<>(); // collection? Array list 만들기
-
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-
-                return userEntity.getRole(); // 객체에서 role 뽑아서 응답
-            }
-        });
-
-        return collection; // collection 응답
-    }
-    */
 
     @Override
     public String getPassword() {
@@ -69,7 +50,7 @@ public class CustomUserDetails implements UserDetails {
 
     // 이메일을 반환하는 메서드
     public String getEmail() {
-        return userEntity.getEmail(); // 이메일을 반환
+        return userEntity.getEmail();
     }
 
 

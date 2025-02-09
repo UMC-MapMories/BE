@@ -30,15 +30,13 @@ public class JWTUtil {
     // 토큰 검증하는 세개의 메서드
     public String getEmail(String token) {
         // String type username 가져오기
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("email", String.class);
     }
-
-    /*
-    public String getRole(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
-    */
-
 
     public Boolean isExpired(String token) {
         return Jwts.parser()
@@ -52,7 +50,7 @@ public class JWTUtil {
     public LocalDateTime getExpiration(String token) {
 
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

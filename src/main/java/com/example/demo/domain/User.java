@@ -23,7 +23,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     private int point;
@@ -34,8 +34,5 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime modifiedAt = LocalDateTime.now(); // 수정일
 
-    // private String socialId;
-    // private String loginType;
-    // private String role;
 }
 

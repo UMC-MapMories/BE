@@ -1,12 +1,12 @@
 package com.example.demo.jwt;
 
+import com.example.demo.apiPayload.ApiResponse;
 import com.example.demo.dto.CustomUserDetails;
 import com.example.demo.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,10 +45,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 throw new AuthenticationException("유효하지 않은 이메일 형식입니다.") {};
             }
 
-            // email, password 확인
-            // System.out.println("Attempting authentication with email: " + email);
-            // System.out.println("Attempting authentication with password: " + password);
-
             // 스프링 시큐리티에서 email, password 검증하기 위해서 token 담기
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
@@ -70,34 +66,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Long id = customUserDetails.getId();
         String email = customUserDetails.getEmail();
 
-        // System.out.println("Authentication successful for user: " + id); // 인증된 사용자 이름
-
-        /*
-        // role 값 추출
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-
-        String role = auth.getAuthority();
-        */
-
         // 100년 설정
         String token = jwtUtil.createJwt(id, email,60 * 60 * 24 * 365 * 100L);
-
-
-        System.out.println("Generated JWT token: " + token); // 생성된 JWT 토큰 확인
 
         // jwt -> header 담아서 응답
         response.addHeader("Authorization", "Bearer " + token);
 
-        ResponseEntity.ok("{\"message\":\"login successful\"}");
+        ApiResponse<String> apiResponse = ApiResponse.onSuccess(null);
+
 
     }
 
     //로그인 실패시 실행하는 메소드
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        System.out.println("Authentication failed: " + failed.getMessage()); // 실패 메시지 출력
         response.setStatus(401);
     }
 
