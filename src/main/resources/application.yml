@@ -24,4 +24,7 @@ spring:
   security:
     user:
       name: user
-      password: user
+      password: {noop}password
+
+firebase:
+  projectId: mapmories-e0aa7
