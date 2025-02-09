@@ -38,13 +38,6 @@ public class JWTUtil {
                 .get("email", String.class);
     }
 
-    /*
-    public String getRole(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
-    */
-
-
     public Boolean isExpired(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -57,7 +50,7 @@ public class JWTUtil {
     public LocalDateTime getExpiration(String token) {
 
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

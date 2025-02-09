@@ -35,18 +35,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-            System.out.println("token null");
             filterChain.doFilter(request, response); //filter 종료, req,resp 넘겨주기 -> 다음 filter
-
             return;
         }
 
-        System.out.println("authorization now");
-
         String token = authorization.split(" ")[1];
-
-        System.out.println("4" + tokenBlacklistService.isTokenBlacklisted(token));
 
         // 토큰이 블랙리스트에 있는지 확인
         if (tokenBlacklistService.isTokenBlacklisted(token)) {
@@ -54,17 +47,6 @@ public class JWTFilter extends OncePerRequestFilter {
             response.getWriter().write("Token has been logged out.");
             return;
         }
-
-        /*
-        //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)) {
-
-            System.out.println("token expired");
-            filterChain.doFilter(request, response);
-
-            return;
-        }
-        */
 
         //토큰에서 email 휙득
         String email = jwtUtil.getEmail(token);

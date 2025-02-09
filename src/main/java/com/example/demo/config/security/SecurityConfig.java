@@ -14,9 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-// import com.example.demo.oauth2.CustomSuccessHandler;
-// import com.example.demo.service.CustomOAuth2UserService;
-// import org.springframework.security.config.Customizer;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,16 +24,10 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final TokenBlacklistService tokenBlacklistService;
 
-    // private final CustomOAuth2UserService customOAuth2UserService;
-    // private final CustomSuccessHandler customSuccessHandler;
-
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, TokenBlacklistService tokenBlacklistService) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.tokenBlacklistService = tokenBlacklistService;
-
-        // this.customOAuth2UserService = customOAuth2UserService;
-        // this.customSuccessHandler = customSuccessHandler;
     }
 
 
@@ -66,22 +58,10 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-
-        /*
-        //oauth2
-        http
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
-                        .successHandler(customSuccessHandler) // handler 등록
-                );
-        */
-
         // 경로별 인가
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/join","location","/diary", "/swagger-ui/**", "/v3/api-docs/**", "/join/Google","/join/Kakao").permitAll() // 경로 권한 다 허용
-                        // .requestMatchers("/admin").hasRole("ADMIN")  // ADMIN 권한만 접근
                         .anyRequest().authenticated()); // 그 외 다른 요청은 authenticated() 메서드로 로그인 사용자만 접근
 
         http.addFilterBefore(new JWTFilter(jwtUtil, tokenBlacklistService), LoginFilter.class);
@@ -91,16 +71,6 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        /*
-        // 로그아웃 설정
-        http.logout(logout -> logout
-                .logoutUrl("/logout")  // 로그아웃 URL 설정
-                .logoutSuccessUrl("/")  // 로그아웃 후 리디렉션 URL 설정
-                .invalidateHttpSession(true)  // 세션 무효화
-                .deleteCookies("JSESSIONID")  // 세션 쿠키 삭제
-        );
-        */
 
         return http.build();
     }
