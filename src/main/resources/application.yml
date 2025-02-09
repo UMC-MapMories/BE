@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://3.36.69.132:3306/mapmories?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://43.201.246.74:3306/mapmories?serverTimezone=Asia/Seoul
     username: root
     password: 252525
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,7 +24,7 @@ spring:
   security:
     user:
       name: user
-      password: user
+      password: {noop}password
 
 firebase:
   projectId: mapmories-e0aa7
