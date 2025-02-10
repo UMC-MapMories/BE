@@ -17,12 +17,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Make application.yml  # application.yml 파일 생성
-        run: |
-          cd ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
-        shell: bash
-
       - name: Grant execute permission for gradlew  # gradlew 실행 권한 부여
         run: chmod +x gradlew
 
@@ -53,14 +47,28 @@ jobs:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
+          APPLICATION_YML: ${{ secrets.APPLICATION_YML }}  # GitHub Secrets에서 가져오기
         run: |
           echo "$EC2_SSH_KEY" > private_key.pem
           chmod 600 private_key.pem
+          
+          # JAR 파일 전송
           jar_file=$(find build/libs -name '*.jar' ! -name '*plain.jar' | head -n 1)
           scp -i private_key.pem -o StrictHostKeyChecking=no "$jar_file" $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/umc7thServer.jar
+          
+          # EC2에서 application.yml 생성
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << 'EOF'
+            echo "Creating application.yml..."
+            cat <<EOT > /home/$EC2_USERNAME/application.yml
+            ${{ secrets.APPLICATION_YML }}
+            EOT
+          EOF
+          
+          # 애플리케이션 재시작
           ssh -i private_key.pem -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "
-            pgrep java | xargs -r kill -15  # 기존에 실행 중인 Java 프로세스 종료
+            pgrep java | xargs -r kill -15
             sleep 10
-            nohup java -jar /home/$EC2_USERNAME/umc7thServer.jar > app.log 2>&1 &  # 새 버전 애플리케이션 실행
+            nohup java -jar /home/$EC2_USERNAME/umc7thServer.jar --spring.config.location=/home/$EC2_USERNAME/application.yml > app.log 2>&1 &
           "
+          
           rm -f private_key.pem  # 민감한 정보 삭제
