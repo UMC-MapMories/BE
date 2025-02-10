@@ -23,6 +23,8 @@ public class Diary {
    // @Column(nullable = false)
     private LocalDate date; // 작성 날짜
 
+    private String country;
+
     //@Column(nullable = false)
     private String title; // 제목
 
