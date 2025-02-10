@@ -111,4 +111,3 @@ public class DiaryController {
         return ApiResponse.onSuccess(diaryResponseDtos);
     }
 }
-

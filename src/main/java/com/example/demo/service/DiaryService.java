@@ -35,7 +35,7 @@ public class DiaryService {
         }
 
         // 3. 필수 항목 누락시 예외 발생
-        if (diaryRequestDto.getDate() == null || diaryRequestDto.getTitle() == null || diaryRequestDto.getContent() == null
+        if (diaryRequestDto.getDate() == null || diaryRequestDto.getCountry() == null || diaryRequestDto.getTitle() == null || diaryRequestDto.getContent() == null
                 || diaryRequestDto.getIsOpen() == null || diaryRequestDto.getIsCollaborative() == null) {
             throw new CustomException(ErrorStatus.MISSING_ESSENTIAL_ELEMENTS.getMessage(),
                     ErrorStatus.MISSING_ESSENTIAL_ELEMENTS.getHttpStatus().value());
@@ -43,6 +43,7 @@ public class DiaryService {
 
         // 4. 다이어리 정보 업데이트
         existingDiary.setDate(diaryRequestDto.getDate());
+        existingDiary.setCountry(diaryRequestDto.getCountry());
         existingDiary.setTitle(diaryRequestDto.getTitle());
         existingDiary.setContent(diaryRequestDto.getContent());
         existingDiary.setImgUrl(diaryRequestDto.getImgUrl());

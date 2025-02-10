@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class DiaryResponseDto {
     private Long diaryId;
+    private String country;
     private String title;
     private String content;
     private String imgUrl;

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 public class DiaryRequestDto {
     private Long diaryId;
+    private String country;
     private String title;
     private String content;
     private String imgUrl;

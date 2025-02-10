@@ -11,6 +11,7 @@ public class DiaryConverter {
     public static Diary toDiary(DiaryRequestDto diaryRequestDto) {
         Diary diary = new Diary();
         diary.setDiaryId(diaryRequestDto.getDiaryId()); // diaryId 포함
+        diary.setCountry(diaryRequestDto.getCountry());
         diary.setDate(diaryRequestDto.getDate());
         diary.setTitle(diaryRequestDto.getTitle());
         diary.setContent(diaryRequestDto.getContent());
@@ -23,6 +24,7 @@ public class DiaryConverter {
     public static DiaryResponseDto toDto(Diary diary) {
         return DiaryResponseDto.builder()
                 .diaryId(diary.getDiaryId())
+                .country(diary.getCountry())
                 .title(diary.getTitle())
                 .content(diary.getContent())
                 .imgUrl(diary.getImgUrl())
