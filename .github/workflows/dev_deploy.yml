@@ -20,6 +20,12 @@ jobs:
       - name: Grant execute permission for gradlew  # gradlew 실행 권한 부여
         run: chmod +x gradlew
 
+      - name: Create application.yml from Secrets  # GitHub Secrets에서 application.yml 생성
+        run: |
+          echo "$APPLICATION_YML" > application.yml
+        env:
+          APPLICATION_YML: ${{ secrets.APPLICATION_YML }}  # GitHub Secrets에서 가져오기
+
       - name: Build with Gradle  # Gradle을 사용하여 프로젝트 빌드
         uses: gradle/gradle-build-action@v2
         with:
