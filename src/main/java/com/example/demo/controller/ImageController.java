@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.apiPayload.ApiResponse;
 import com.example.demo.service.S3FileService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,11 +24,12 @@ public class ImageController {
         this.s3FileService = s3FileService;
     }
 
-    @PostMapping("/{fileName}")
+    @Operation(summary = "이미지 업로드 url 발급", description = "이미지를 업로드 할 링크를 발급 받는 API, result의 url로 업로드 진행")
+    @PostMapping
     public ApiResponse<Map<String, String>> getPresignedUrl(
-            @PathVariable(name = "fileName") @Schema(description = "확장자명을 포함해주세요")
+            @RequestParam(name = "fileName") @Schema(description = "확장자명을 포함해주세요")
             String fileName,
-            @RequestParam(name = "contentType") @Schema(description = "파일의 contentType을 입력해주세요")
+            @RequestParam(name = "contentType") @Schema(description = "파일의 contentType을 입력해주세요 Ex) image/png")
             String contentType) {
 
         // Assuming getPresignedUrl returns a Map
