@@ -7,6 +7,7 @@ import com.example.demo.dto.DiaryRequestDto;
 import com.example.demo.dto.DiaryResponseDto;
 import com.example.demo.jwt.JWTUtil;
 import com.example.demo.service.DiaryService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class DiaryController {
     private JWTUtil jwtUtil;
 
     // 다이어리 작성
+    @Operation(summary = "다이어리 작성", description = "다이어리를 작성하는 API")
     @PostMapping
     public ApiResponse<DiaryResponseDto> createDiary(@RequestBody DiaryRequestDto diaryRequestDto, HttpServletRequest request) {
         // 1. JWT 토큰에서 사용자 ID 추출
@@ -51,6 +53,7 @@ public class DiaryController {
     }
 
     // 다이어리 상세 조회 (특정 다이어리)
+    @Operation(summary = "다이어리 상세 조회", description = "특정 다이어리에 대해 상세하게 조회하는 API")
     @GetMapping("/{diaryId}")
     public ApiResponse<DiaryResponseDto> getDiary(@PathVariable Long diaryId, HttpServletRequest request) {
         // 1. JWT 토큰에서 사용자 ID 추출
@@ -70,6 +73,7 @@ public class DiaryController {
     }
 
     // 다이어리 삭제
+    @Operation(summary = "다이어리 삭제", description = "특정 다이어리를 삭제하는 API")
     @DeleteMapping("/{diaryId}")
     public ApiResponse<Void> deleteDiary(@PathVariable Long diaryId, HttpServletRequest request) {
         // 1. JWT 토큰에서 사용자 ID 추출
@@ -88,6 +92,7 @@ public class DiaryController {
     }
 
     // 다이어리 리스트 조회
+    @Operation(summary = "전체 다이어리 목록 반환", description = "사용자가 작성한 다이어리 전체 목록을 리스트로 반환")
     @GetMapping
     public ApiResponse<List<DiaryResponseDto>> getAllDiaries(HttpServletRequest request) {
         // 1. JWT 토큰에서 사용자 ID 추출
@@ -111,4 +116,3 @@ public class DiaryController {
         return ApiResponse.onSuccess(diaryResponseDtos);
     }
 }
-

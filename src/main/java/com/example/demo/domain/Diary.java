@@ -20,7 +20,7 @@ public class Diary {
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // 작성자 (User 테이블 참조)
 
-   // @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalDate date; // 작성 날짜
 
     private String country;
