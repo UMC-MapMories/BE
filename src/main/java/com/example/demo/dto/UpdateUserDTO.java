@@ -10,5 +10,4 @@ import lombok.Setter;
 public class UpdateUserDTO {
     private String name;
     private String profileImg;
-    private String email;
 }
