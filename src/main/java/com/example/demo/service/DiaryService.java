@@ -10,6 +10,7 @@ import com.example.demo.repository.DiaryRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,8 +27,11 @@ public class DiaryService {
 
     // 다이어리 작성
     public Diary createDiary(DiaryRequestDto diaryRequestDto, Long userId) {
-        if (diaryRequestDto.getDate() == null || diaryRequestDto.getCountry() == null || diaryRequestDto.getTitle() == null || diaryRequestDto.getContent() == null
-                || diaryRequestDto.getIsOpen() == null || diaryRequestDto.getIsCollaborative() == null) {
+        if (!StringUtils.hasText(diaryRequestDto.getCountry()) ||
+                !StringUtils.hasText(diaryRequestDto.getTitle()) ||
+                diaryRequestDto.getIsOpen() == null ||
+                diaryRequestDto.getIsCollaborative() == null ||
+                diaryRequestDto.getDate() == null) {
             throw new CustomException(ErrorStatus.MISSING_ESSENTIAL_ELEMENTS.getMessage(),
                     ErrorStatus.MISSING_ESSENTIAL_ELEMENTS.getHttpStatus().value());
         }
