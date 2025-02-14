@@ -29,7 +29,7 @@ public class DiaryController {
     private JWTUtil jwtUtil;
 
     // 다이어리 작성
-    @Operation(summary = "다이어리 작성", description = "다이어리를 작성하는 API")
+    @Operation(summary = "다이어리 작성", description = "다이어리와 위치 정보를 작성하는 API")
     @PostMapping
     public ApiResponse<DiaryResponseDto> createDiary(@RequestBody DiaryRequestDto diaryRequestDto, HttpServletRequest request) {
         // 1. JWT 토큰에서 사용자 ID 추출
