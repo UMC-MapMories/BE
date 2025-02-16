@@ -92,7 +92,7 @@ public class DiaryController {
     }
 
     // 다이어리 리스트 조회
-    @Operation(summary = "전체 다이어리 목록 반환", description = "사용자가 작성한 다이어리 전체 목록을 리스트로 반환")
+    @Operation(summary = "나의 전체 다이어리 목록 반환", description = "사용자가 작성한 다이어리 전체 목록을 반환하는 API")
     @GetMapping
     public ApiResponse<List<DiaryResponseDto>> getAllDiaries(HttpServletRequest request) {
         // 1. JWT 토큰에서 사용자 ID 추출
@@ -115,4 +115,40 @@ public class DiaryController {
 
         return ApiResponse.onSuccess(diaryResponseDtos);
     }
+
+    @Operation(summary = "모든 사용자의 다이어리 목록 반환", description = "모든 사용자가 전체 공개한 다이어리 목록을 반환하는 API")
+    @GetMapping("/all")
+    public  ApiResponse<List<DiaryResponseDto>> getOpenDiaries() {
+        List<Diary> diaries = diaryService.getAllDiaries();
+
+        List<DiaryResponseDto> diaryResponseDtos = diaries.stream()
+                .map(DiaryConverter::toDto)
+                .collect(Collectors.toList());
+
+        return ApiResponse.onSuccess(diaryResponseDtos);
+    }
+
+    @Operation(summary = "친구 다이어리 목록 반환", description = "친구 목록에 있는 사용자의 다이어리 목록을 반환하는 API")
+    @GetMapping("/friends")
+    public ApiResponse<List<DiaryResponseDto>> getCollaborativeDiaries(HttpServletRequest request) {
+        // 1. JWT 토큰에서 사용자 ID 추출
+        String token = request.getHeader("Authorization");
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ApiResponse.onFailure(ErrorStatus.INVALID_TOKEN.getCode(), ErrorStatus.INVALID_TOKEN.getMessage(), null);
+        }
+
+        String jwtToken = token.split(" ")[1];
+        Long userId = jwtUtil.getId(jwtToken);
+
+        List<Diary> diaries = diaryService.getFriendDiaries(userId);
+
+        List<DiaryResponseDto> diaryResponseDto = diaries.stream()
+                .map(DiaryConverter::toDto)
+                .collect(Collectors.toList());
+
+        return ApiResponse.onSuccess(diaryResponseDto);
+    }
 }
+
+

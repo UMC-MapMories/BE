@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.domain.User;
 import lombok.*;
 
 import java.time.LocalDateTime;

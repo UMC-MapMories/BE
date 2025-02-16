@@ -3,18 +3,21 @@ package com.example.demo.service;
 import com.example.demo.apiPayload.code.status.ErrorStatus;
 import com.example.demo.converter.DiaryConverter;
 import com.example.demo.domain.Diary;
+import com.example.demo.domain.Friendship;
+import com.example.demo.domain.FriendshipStatus;
 import com.example.demo.domain.User;
 import com.example.demo.dto.DiaryRequestDto;
 import com.example.demo.exception.CustomException;
 import com.example.demo.repository.DiaryRepository;
+import com.example.demo.repository.FriendshipRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DiaryService {
@@ -24,6 +27,9 @@ public class DiaryService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FriendshipRepository friendshipRepository;
 
     // 다이어리 작성
     public Diary createDiary(DiaryRequestDto diaryRequestDto, Long userId) {
@@ -72,5 +78,21 @@ public class DiaryService {
     // 사용자가 작성한 전체 다이어리 목록 조회
     public List<Diary> getAllDiariesByUserId(Long userId) {
         return diaryRepository.findDiaryByUserId(userId);
+    }
+
+    public List<Diary> getAllDiaries() { return diaryRepository.findDiariesByIsOpenTrue(); }
+
+    public List<Diary> getFriendDiaries(Long userId) {
+
+        // 친구 목록 조회
+        List<Friendship> friends = friendshipRepository.findByUserId(userId, FriendshipStatus.ACCEPTED);
+
+        // 친구 목록에서 User만 추출
+        List<User> friendUsers = friends.stream()
+                .map(friendship -> (friendship.getFromUser().getId().equals(userId)) ? friendship.getToUser() : friendship.getFromUser())
+                .collect(Collectors.toList());
+
+        // 친구 공개인 다이어리 조회
+        return diaryRepository.findByIsOpenTrueAndUserIn(friendUsers);
     }
 }
