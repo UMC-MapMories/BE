@@ -55,8 +55,7 @@ public class DiaryService {
     }
 
     // 특정 다이어리 조회
-    public Optional<Diary> getDiaryByIdAndUserId(Long diaryId, Long userId) {
-        // 친구 공개나 비공개 게시물 조회 시의 로직은 추후 추가
+    public Optional<Diary> getDiaryByIdAndUserId(Long diaryId) {
 
         Optional<Diary> diary = diaryRepository.findById(diaryId);
 

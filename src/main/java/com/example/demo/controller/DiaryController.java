@@ -55,19 +55,9 @@ public class DiaryController {
     // 다이어리 상세 조회 (특정 다이어리)
     @Operation(summary = "다이어리 상세 조회", description = "특정 다이어리에 대해 상세하게 조회하는 API")
     @GetMapping("/{diaryId}")
-    public ApiResponse<DiaryResponseDto> getDiary(@PathVariable Long diaryId, HttpServletRequest request) {
-        // 1. JWT 토큰에서 사용자 ID 추출
-        String token = request.getHeader("Authorization");
+    public ApiResponse<DiaryResponseDto> getDiary(@PathVariable Long diaryId) {
 
-        if (token == null || !token.startsWith("Bearer ")) {
-            return ApiResponse.onFailure(ErrorStatus.INVALID_TOKEN.getCode(), ErrorStatus.INVALID_TOKEN.getMessage(), null);
-        }
-
-        String jwtToken = token.split(" ")[1];
-        Long userId = jwtUtil.getId(jwtToken);
-
-        // 2. 다이어리 조회
-        Optional<Diary> diary = diaryService.getDiaryByIdAndUserId(diaryId, userId);
+        Optional<Diary> diary = diaryService.getDiaryByIdAndUserId(diaryId);
         DiaryResponseDto diaryDto = DiaryConverter.toDto(diary.get());
         return ApiResponse.onSuccess(diaryDto);
     }
