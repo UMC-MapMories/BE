@@ -1,6 +1,7 @@
 package com.example.demo.jwt;
 
 import com.example.demo.apiPayload.ApiResponse;
+import com.example.demo.apiPayload.code.status.ErrorStatus;
 import com.example.demo.dto.CustomUserDetails;
 import com.example.demo.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 // POST 방식, /login 경로, 로그인 API 담당하는 filter class
@@ -77,10 +79,30 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     }
 
-    //로그인 실패시 실행하는 메소드
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        response.setStatus(401);
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException {
+        // 실패 응답 생성 (ErrorStatus._UNAUTHORIZED 활용)
+        ErrorStatus errorStatus = ErrorStatus.LOGIN_FAILED;
+
+        // 응답 상태 코드 설정 (NPE 방지)
+        if (errorStatus.getHttpStatus() != null) {
+            response.setStatus(errorStatus.getHttpStatus().value());
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 기본값 설정
+        }
+
+        // JSON 응답 생성
+        ApiResponse<Map<String, Object>> apiResponse = ApiResponse.onFailure(
+                errorStatus.getCode(),
+                errorStatus.getMessage(),
+                null
+        );
+
+        // JSON 응답을 클라이언트로 전송
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(apiResponse));
     }
 
     // 이메일 형식 검증
