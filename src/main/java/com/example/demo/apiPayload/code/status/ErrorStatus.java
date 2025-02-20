@@ -22,7 +22,8 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "USER4003", "닉네임은 필수 입니다."),
     LOGIN_ID_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER4004", "이미 존재하는 로그인 ID입니다."),
 
-    // 토큰 관련 에러
+    // 로그인 관련 에러
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "AUTH4002", "아이디 또는 비밀번호를 확인해주세요."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST,"AUTH4001", "잘못된 토큰입니다."),
 
     //다이어리 관련 에러
